@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration scan="true">
+
+	<property resource="application.properties" />
+
+	<property name="LOG_PATH" value="logs/smsapi/" />
+	<property name="LOG_FILE" value="application" />
+	<property name="LOG_PATTERN"
+		value="%d{YYYY-MM-dd'T'HH:mm:ss} %-4relative %-5level-[%logger{10}:%L] [%thread] - %msg%n" />
+
+	<property name="FAIL_MESSAGE_LOG_PATTERN" value="%msg%n" />
+
+
+	<appender name="consoleAppender"
+		class="ch.qos.logback.core.ConsoleAppender">
+		<encoder>
+			<charset>UTF-8</charset>
+			<Pattern>${LOG_PATTERN}</Pattern>
+		</encoder>
+	</appender>
+
+	<appender name="FILE"
+		class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<file>${LOG_PATH}${LOG_FILE}.log</file>
+		<encoder>
+			<charset>UTF-8</charset>
+			<pattern>${LOG_PATTERN}</pattern>
+		</encoder>
+
+		<rollingPolicy
+			class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+			<fileNamePattern>
+				${LOG_PATH}${LOG_FILE}_%d{dd-MM-yyyy_HH}_%i.log
+			</fileNamePattern>
+			<maxFileSize>40MB</maxFileSize>
+		</rollingPolicy>
+	</appender>
+
+
+
+
+	<appender name="FAILMESSAGEFILEWRITTER"
+		class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<file>${LOG_PATH}failtosend/failedpacket.log</file>
+		<encoder
+			class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+			<Pattern>
+				%msg%n
+			</Pattern>
+			<outputPatternAsHeader>false</outputPatternAsHeader>
+		</encoder>
+
+		<rollingPolicy
+			class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<!-- rollover daily -->
+			<fileNamePattern>${LOG_PATH}failtosend/failedpacket.log_%d{dd-MM-yyyy_HH}_%i.log
+			</fileNamePattern>
+			<timeBasedFileNamingAndTriggeringPolicy
+				class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+				<maxFileSize>40MB</maxFileSize>
+			</timeBasedFileNamingAndTriggeringPolicy>
+		</rollingPolicy>
+
+	</appender>
+	
+	<appender name="INVALIDLOGINATTEMPT"
+		class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<file>${LOG_PATH}invalidlogin/invalid.log</file>
+		<encoder
+			class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+			<Pattern>
+				%msg%n
+			</Pattern>
+			<outputPatternAsHeader>false</outputPatternAsHeader>
+		</encoder>
+
+		<rollingPolicy
+			class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<!-- rollover daily -->
+			<fileNamePattern>${LOG_PATH}invalidlogin/invalid.log_%d{dd-MM-yyyy}_%i.log
+			</fileNamePattern>
+			<timeBasedFileNamingAndTriggeringPolicy
+				class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+				<maxFileSize>40MB</maxFileSize>
+			</timeBasedFileNamingAndTriggeringPolicy>
+		</rollingPolicy>
+	</appender>
+
+	<root level="info">
+		<appender-ref ref="consoleAppender" />
+		<appender-ref ref="FILE" />
+	</root>
+	
+	<logger name="FAIL-MESSAGE-AUDIT" level="info"
+		additivity="false">
+		<appender-ref ref="FAILMESSAGEFILEWRITTER" />
+	</logger>
+	
+	<logger name="INVALID-LOGIN" level="info"
+		additivity="false">
+		<appender-ref ref="INVALIDLOGINATTEMPT" />
+	</logger>
+	
+	
+</configuration>
